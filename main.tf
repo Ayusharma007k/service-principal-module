@@ -3,34 +3,60 @@ resource "azuread_application" "sp" {
   display_name = var.app_name
   owners       = [var.owner_object_id]
 
-  required_resource_access {
-    # Microsoft Graph App ID
-    resource_app_id = "00000003-0000-0000-c000-000000000000"
+  dynamic "required_resource_access" {
+    for_each = var.enable_api_permission ? [1] : []
+    content {
+      resource_app_id = "00000003-0000-0000-c000-000000000000"
 
-    # User.Read
-    resource_access {
-      id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d"
-      type = "Scope"
-    }
+      resource_access {
+        id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d" # User.Read
+        type = "Scope"
+      }
 
-    # Email
-    resource_access {
-      id   = "64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0"
-      type = "Scope"
-    }
+      resource_access {
+        id   = "64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0" # Email
+        type = "Scope"
+      }
 
-    # Profile
-    resource_access {
-      id   = "14dad69e-099b-42c9-810b-d002981feec1"
-      type = "Scope"
-    }
+      resource_access {
+        id   = "14dad69e-099b-42c9-810b-d002981feec1" # Profile
+        type = "Scope"
+      }
 
-    # OpenID
-    resource_access {
-      id   = "37f7f235-527c-4136-accd-4a02d197296e"
-      type = "Scope"
+      resource_access {
+        id   = "37f7f235-527c-4136-accd-4a02d197296e" # OpenID
+        type = "Scope"
+      }
     }
   }
+  # required_resource_access {
+  #   # Microsoft Graph App ID
+  #   resource_app_id = "00000003-0000-0000-c000-000000000000"
+
+  #   # User.Read
+  #   resource_access {
+  #     id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d"
+  #     type = "Scope"
+  #   }
+
+  #   # Email
+  #   resource_access {
+  #     id   = "64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0"
+  #     type = "Scope"
+  #   }
+
+  #   # Profile
+  #   resource_access {
+  #     id   = "14dad69e-099b-42c9-810b-d002981feec1"
+  #     type = "Scope"
+  #   }
+
+  #   # OpenID
+  #   resource_access {
+  #     id   = "37f7f235-527c-4136-accd-4a02d197296e"
+  #     type = "Scope"
+  #   }
+  # }
 }
 
 

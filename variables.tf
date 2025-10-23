@@ -28,3 +28,8 @@ variable "secret_names" {
   type        = list(string)
   default     = ["secret1", "secret2", "secret3"]
 }
+variable "enable_api_permission" {
+  description = "Whether to enable Microsoft Graph API permissions (User.Read, Email, Profile, OpenID)"
+  type        = bool
+  default     = true
+}
