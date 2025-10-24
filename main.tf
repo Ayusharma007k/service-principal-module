@@ -1,7 +1,17 @@
-# Create Azure AD Application
+# -------------------------------
+# Azure AD Application
+# -------------------------------
 resource "azuread_application" "sp" {
   display_name = var.app_name
   owners       = [var.owner_object_id]
+
+ # Single web block with all redirect URIs
+  web {
+    redirect_uris = var.redirect_uris
+
+    # Only one logout URL is allowed
+    logout_url = length(var.front_channel_logout_urls) > 0 ? var.front_channel_logout_urls[0] : null
+  }
 
   dynamic "required_resource_access" {
     for_each = var.enable_api_permission ? [1] : []
@@ -30,34 +40,22 @@ resource "azuread_application" "sp" {
     }
   }
 }
-
-# Create Service Principal
+# -------------------------------
+# Service Principal
+# -------------------------------
 resource "azuread_service_principal" "sp" {
   client_id                    = azuread_application.sp.client_id
   app_role_assignment_required = false
   owners                       = [var.owner_object_id]
 }
 
-# Create Multiple Secrets for the same App
+# -------------------------------
+# Secrets
+# -------------------------------
 resource "azuread_application_password" "sp_secrets" {
-  for_each = { for s in var.secret_names : s => s }
+  for_each = var.secret_map
 
   application_id = azuread_application.sp.id
-  display_name   = each.value
-  end_date       = timeadd(timestamp(), "8760h") # 1 year
+  display_name   = each.key
+  end_date       = timeadd(timestamp(), each.value)
 }
-
-# # Print secrets to console after creation
-# resource "null_resource" "print_secrets" {
-#   depends_on = [azuread_application_password.sp_secrets]
-
-#   provisioner "local-exec" {
-#     command = <<EOT
-# echo "Service Principal Secrets:"
-# %{ for name, secret in azuread_application_password.sp_secrets ~}
-# echo "${name} => ID: ${secret.id}, Value: ${secret.value}"
-# %{ endfor ~}
-# EOT
-#     interpreter = ["bash", "-c"]
-#   }
-# }
