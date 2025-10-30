@@ -2,6 +2,7 @@
 # Azure AD Application
 # -------------------------------
 resource "azuread_application" "sp" {
+  count        = var.enable ? 1 : 0
   display_name = var.app_name
   owners       = [var.owner_object_id]
 
@@ -12,9 +13,9 @@ resource "azuread_application" "sp" {
     logout_url = length(var.front_channel_logout_urls) > 0 ? var.front_channel_logout_urls[0] : null
   }
 
-# Api Permissions
-dynamic "required_resource_access" {
-  for_each = var.enable_api_permission ? [1] : []
+  # API Permissions
+  dynamic "required_resource_access" {
+    for_each = var.enable_api_permission ? [1] : []
     content {
       resource_app_id = "00000003-0000-0000-c000-000000000000"
 
@@ -33,7 +34,8 @@ dynamic "required_resource_access" {
 # Service Principal
 # -------------------------------
 resource "azuread_service_principal" "sp" {
-  client_id                    = azuread_application.sp.client_id
+  count                        = var.enable ? 1 : 0
+  client_id                    = azuread_application.sp[0].client_id
   app_role_assignment_required = false
   owners                       = [var.owner_object_id]
 }
@@ -42,9 +44,9 @@ resource "azuread_service_principal" "sp" {
 # Secrets
 # -------------------------------
 resource "azuread_application_password" "sp_secrets" {
-  for_each = var.secret_map
+  for_each = var.enable ? var.secret_map : {}
 
-  application_id = azuread_application.sp.id
+  application_id = azuread_application.sp[0].id
   display_name   = each.key
   end_date       = timeadd(timestamp(), each.value)
 }

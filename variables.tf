@@ -27,6 +27,11 @@ variable "secret_map" {
   description = "Map of secret names to expiry times (Terraform duration format)"
   type        = map(string)
 }
+variable "enable" {
+  description = "Enable or disable creation of all resources"
+  type        = bool
+  default     = true
+}
 variable "enable_api_permission" {
   description = "Whether to enable Microsoft Graph API permissions (User.Read, Email, Profile, OpenID)"
   type        = bool
