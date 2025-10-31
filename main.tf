@@ -13,21 +13,6 @@ resource "azuread_application" "sp" {
     logout_url = length(var.front_channel_logout_urls) > 0 ? var.front_channel_logout_urls[0] : null
   }
 
-  # # API Permissions
-  # dynamic "required_resource_access" {
-  #   for_each = var.enable_api_permission ? [1] : []
-  #   content {
-  #     resource_app_id = "00000003-0000-0000-c000-000000000000"
-
-  #     dynamic "resource_access" {
-  #       for_each = var.api_permissions
-  #       content {
-  #         id   = resource_access.value.id
-  #         type = resource_access.value.type
-  #       }
-  #     }
-  #   }
-  # }
   # Dynamic API Permissions
   dynamic "required_resource_access" {
     for_each = local.required_permissions
