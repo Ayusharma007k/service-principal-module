@@ -65,3 +65,8 @@ variable "api_permissions" {
     { id = "37f7f235-527c-4136-accd-4a02d197296e", type = "Scope" },
   ]
 }
+variable "resource_app_id" {
+  description = "The App ID of the resource API (e.g. Microsoft Graph API)"
+  type        = string
+  default     = "00000003-0000-0000-c000-000000000000" # Microsoft Graph API
+}

@@ -29,6 +29,15 @@ resource "azuread_application_app_role" "admin" {
   role_id              = uuid()
 }
 
+locals {
+  required_permissions = [
+    {
+      resource_app_id  = var.resource_app_id
+      resource_access  = var.api_permissions
+    }
+  ]
+}
+
 # -------------------------------
 # Assign App Roles to the SP
 # -------------------------------
